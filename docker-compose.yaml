@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: spring-boot-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    working_dir: /app
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SERVER_PORT=8082
+    volumes:
+      # Montar código fuente local
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
+      # Montar target para que los .class generados se mantengan
+      - ./target:/app/target
+    command: mvn spring-boot:run
