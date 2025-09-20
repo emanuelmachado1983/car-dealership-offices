@@ -79,4 +79,4 @@ jobs:
       - name: Trigger Render Deploy
         run: |
           curl -X POST \
-          "${{ secrets.RENDER_DEPLOY_HOOK }}&imgURL=docker.io/emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}"
+          "${{ secrets.RENDER_DEPLOY_HOOK }}&imgURL=docker.io%2Femanuelmachado1983%2Fcar-dealearship-offices-docker%3A${{ github.sha }}"
