@@ -78,6 +78,7 @@ jobs:
     steps:
       - name: Trigger Render Deploy
         run: |
-          curl -X POST \
-          "${{ secrets.RENDER_DEPLOY_HOOK }}&imgURL=docker.io%2Femanuelmachado1983%2Fcar-dealearship-offices-docker%40${{ github.sha }}"
+          DEPLOY_URL="${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=docker.io%2Femanuelmachado1983%2Fcar-dealearship-offices-docker%3A${{ github.sha }}"
+          echo "Deploy URL: $DEPLOY_URL"
+          curl -X POST "$DEPLOY_URL"
 
