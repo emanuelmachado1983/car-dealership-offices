@@ -48,10 +48,14 @@ COPY --from=build /app/target/app.jar.gz app.jar.gz
 RUN gunzip app.jar.gz
 
 # === New Relic Agent ===
+# Instalar unzip
+RUN apk add --no-cache unzip curl
+
 # Descargar la última versión del agente
-RUN wget -q https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
-    && unzip newrelic-java.zip -d /app/newrelic \
-    && rm newrelic-java.zip
+RUN curl -L https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
+    -o /tmp/newrelic-java.zip \
+ && unzip /tmp/newrelic-java.zip -d /app/ \
+ && rm /tmp/newrelic-java.zip
 
 
 # Exponer puerto de la app
