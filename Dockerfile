@@ -47,6 +47,13 @@ WORKDIR /app
 COPY --from=build /app/target/app.jar.gz app.jar.gz
 RUN gunzip app.jar.gz
 
+# === New Relic Agent ===
+# Descargar la última versión del agente
+RUN wget -q https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
+    && unzip newrelic-java.zip -d /app/newrelic \
+    && rm newrelic-java.zip
+
+
 # Exponer puerto de la app
 EXPOSE 8082
 
@@ -57,8 +64,8 @@ ENV SPRING_PROFILES_ACTIVE=prod
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
+#ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-javaagent:/app/newrelic/newrelic.jar", "-jar", "app.jar"]
 
 
 #TODO: ver si hay una forma de comprimir el jar para que sea lo màs chiquito posible.
