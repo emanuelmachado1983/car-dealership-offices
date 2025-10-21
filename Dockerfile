@@ -1,7 +1,7 @@
 #
 # Etapa 1: Development
 #
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS dev
+FROM maven:3.9.11-eclipse-temurin-17-alpine AS dev
 
 WORKDIR /app
 
@@ -12,10 +12,10 @@ RUN mvn dependency:go-offline
 # Copio código fuente
 COPY src ./src
 
-# Setear un entorno de desarrollo
+# Seteo un entorno de desarrollo
 ENV SPRING_PROFILES_ACTIVE=dev
 
-# Usuario no root (buena práctica)
+# Usuario no root (buena práctica). Esto evita que el contenedor corra como root.
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring
 
@@ -23,16 +23,17 @@ USER spring
 #
 # Etapa 2: Build
 #
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
+FROM maven:3.9.11-eclipse-temurin-17-alpine AS build
 
 WORKDIR /app
 
 # Copio todo desde la etapa dev (ya tiene dependencias descargadas)
 COPY --from=dev /app /app
 
-# Compilo y empaqueto (puedes quitar -DskipTests si querés ejecutar tests)
+# Compilo y empaqueto (quito -DskipTests si querés ejecutar tests)
 RUN mvn clean package -DskipTests
 
+# Comprimo el jar resultante
 RUN gzip -9 target/*.jar && mv target/*.jar.gz target/app.jar.gz
 
 
@@ -45,13 +46,13 @@ WORKDIR /app
 
 # Copio solo el jar generado en la etapa de build
 COPY --from=build /app/target/app.jar.gz app.jar.gz
-RUN gunzip app.jar.gz
+RUN gunzip app.jar.gz   # Descomprimir el archivo jar
 
 # === New Relic Agent ===
-# Instalar unzip
+# Instalo unzip
 RUN apk add --no-cache unzip curl
 
-# Descargar la última versión del agente
+# Descargo la última versión del agente
 RUN curl -L https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip \
     -o /tmp/newrelic-java.zip \
  && unzip /tmp/newrelic-java.zip -d /app/ \
