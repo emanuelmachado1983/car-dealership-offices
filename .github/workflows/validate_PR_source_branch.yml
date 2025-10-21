@@ -6,8 +6,15 @@ on:
       - main
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
+  validate: #se crea un job que se llama validate
+    runs-on: ubuntu-latest # Se ejecuta en una máquina virtual con Ubuntu.
+
+    #Este paso ejecuta un script en bash.
+    #${{ github.head_ref }} es la rama de origen del PR (la rama desde la que se está intentando hacer el merge).
+    #El script verifica si la rama de origen es development:
+    #Si NO es development, muestra el mensaje de error y termina el job con exit 1
+    #(lo que hace que el workflow falle y no permita el merge).
+    #Si SÍ es development, muestra el mensaje de éxito y permite continuar.
     steps:
       - name: Check source branch
         run: |
@@ -16,3 +23,4 @@ jobs:
             exit 1
           fi
           echo "✅ Merge permitido."
+
