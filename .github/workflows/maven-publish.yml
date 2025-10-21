@@ -89,3 +89,18 @@ jobs:
           DEPLOY_URL="${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=docker.io%2Femanuelmachado1983%2Fcar-dealearship-offices-docker%3A${{ github.sha }}"
           curl -X POST "$DEPLOY_URL"
 
+      - name: Esperar despliegue en Render
+        run: sleep 60
+      - name: Verificar que el servidor está alive (reintentos)
+        run: |
+          for i in {1..5}; do
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://car-dealearship-offices-docker-latest.onrender.com/)
+            if [ "$RESPONSE" -eq 200 ]; then
+              echo "✅ El servidor está alive y responde correctamente."
+              exit 0
+            fi
+            echo "Intento $i fallido. Código HTTP: $RESPONSE. Reintentando en 20 segundos..."
+            sleep 20
+          done
+          echo "❌ El servidor no está alive después de 5 intentos. Último código HTTP: $RESPONSE"
+          exit 1
