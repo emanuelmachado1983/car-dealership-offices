@@ -94,7 +94,7 @@ jobs:
       - name: Verificar que el servidor está alive (reintentos)
         run: |
           for i in {1..5}; do
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://car-dealearship-offices-docker-latest.onrender.com/actuator/health)
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://car-dealearship-offices-docker-latest.onrender.com/)
             if [ "$RESPONSE" -eq 200 ]; then
               echo "✅ El servidor está alive y responde correctamente."
               exit 0
