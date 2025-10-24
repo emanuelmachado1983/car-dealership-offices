@@ -2,22 +2,18 @@ version: '3.8'
 
 services:
   api:
-    container_name: spring-boot-dev
+    container_name: spring-boot-prod
     build:
       context: .
       dockerfile: Dockerfile
-      target: dev
-    working_dir: /app
+      target: prod
+    image: emanuelmachado1983/car-dealearship-offices-docker:latest
     ports:
       - "8082:8082"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SERVER_PORT=8082
-    volumes:
-      - ./src:/app/src
-      - ./pom.xml:/app/pom.xml
-      - ./target:/app/target
-    command: mvn spring-boot:run
+    command: java -jar /app/target/*.jar
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8082/"]
       interval: 50s
