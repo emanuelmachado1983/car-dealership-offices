@@ -61,12 +61,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      #Construye la imagen Docker usando el Dockerfile de mi proyecto.
-      #Le asigna la etiqueta emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}
-      #(usa el hash del commit para identificar la versión).
-      - name: Build Docker
-        run: docker build -t emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }} .
-
 
       #Inicia sesión en Docker Hub usando las credenciales guardadas en los secrets del repositorio
       - name: Login Docker Hub
@@ -75,9 +69,21 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_API_PASSWORD }}
 
+
+      #Construye la imagen Docker usando Docker compose de prod en mi proyecto.
+      #Genero la tag de latest y github.sha para la imagen Docker
+      #(usa el hash del commit para identificar la versión).
+      - name: Build and tag Docker image using Compose
+        run: |
+          docker compose -f docker-compose.prod.yml build
+          docker tag emanuelmachado1983/car-dealearship-offices-docker:latest emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}
+
+
       #Sube la imagen Docker construida a Docker Hub.
-      - name: Push Docker
-        run: docker push emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push emanuelmachado1983/car-dealearship-offices-docker:latest
+          docker push emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}
 
   deploy-render: #se crea un job que se llama deploy-render
     runs-on: ubuntu-latest #Se ejecuta en una máquina virtual con Ubuntu.
