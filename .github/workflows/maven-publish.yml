@@ -75,7 +75,7 @@ jobs:
       #(usa el hash del commit para identificar la versión).
       - name: Build and tag Docker image using Compose
         run: |
-          docker compose -f docker-compose.prod.yml build
+          docker compose -f docker-compose.prod.yaml build
           docker tag emanuelmachado1983/car-dealearship-offices-docker:latest emanuelmachado1983/car-dealearship-offices-docker:${{ github.sha }}
 
 
